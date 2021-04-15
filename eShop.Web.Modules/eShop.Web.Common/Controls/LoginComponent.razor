@@ -1,0 +1,45 @@
+﻿@page "/login"
+
+@inject NavigationManager navigationManager 
+<h3>Login</h3>
+
+<br />
+<div class="row">
+    @if (loginModel != null)
+    {
+        <EditForm Model="loginModel" class="form-line" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <div class="form-group">
+                <label for="name">Name</label>
+                <InputText id="name" @bind-Value="loginModel.UserName" class="form-control"></InputText>
+                <ValidationMessage For="()=>loginModel.UserName"></ValidationMessage>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Password</label>
+                <InputText id="name" @bind-Value="loginModel.Password" class="form-control"></InputText>
+                <ValidationMessage For="()=>loginModel.Password"></ValidationMessage>
+            </div>
+            <button type="submit" class="btn btn-info">Login</button>
+        </EditForm>
+    }
+</div>
+
+
+
+
+@code {
+    private LoginViewModel loginModel;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        loginModel = new LoginViewModel();
+    }
+
+    private void HandleLogin()
+    {
+        navigationManager.NavigateTo($"/authenticate?usr={loginModel.UserName}&pwd={loginModel.Password}", true);
+    }
+}

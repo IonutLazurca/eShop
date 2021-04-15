@@ -1,0 +1,87 @@
+﻿@page "/orderdetail/{Id:int}"
+
+@attribute [Authorize]
+@inject NavigationManager navigationManager
+@inject IViewOrderDetailUseCase viewOrderDetailUseCase
+@inject IProcessOrderUseCase processOrderUseCase
+
+
+<h3>Order detail</h3>
+<br />
+
+@if (order != null)
+{
+    <p>
+        Customer Info
+    </p>
+    <p>@order.CustomerName</p>
+    <p>@order.CustomerAddress</p>
+    <p>@order.CustomerCity</p>
+    <p>@order.CustomerCounty</p>
+    <p>@order.CustomerCountry</p>
+
+    <br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Product Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in order.LineItems)
+            {
+                <tr>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Price</td>
+                    <td>@item.Quantity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <div class="row">
+        <button class="btn btn-primary" @onclick="@(()=>HandleProcessOrder(order.OrderId.Value))">Mark Order as Processed</button>
+
+
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authStateTask { get; set; }
+
+    private AuthenticationState authState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await authStateTask;
+    }
+
+    private Order order;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (Id > 0)
+        {
+            order = viewOrderDetailUseCase.Execute(Id);
+        }
+
+    }
+
+    private void HandleProcessOrder(int orderId)
+    {
+        if(order != null && authState != null)
+        {
+            processOrderUseCase.Execute(orderId, authState.User.Identity.Name);
+            navigationManager.NavigateTo("outstandingorders");
+        }
+
+    }
+
+}

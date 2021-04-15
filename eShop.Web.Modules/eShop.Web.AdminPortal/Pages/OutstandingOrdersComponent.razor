@@ -1,0 +1,23 @@
+﻿@page "/outstandingorders"
+@page "/admin"
+
+@inject IViewOutstandingOrdersUseCase viewOutstandingOrdersUseCase
+
+@attribute [Authorize]
+
+<h3>Outstanding Orders</h3>
+<br />
+<OrderListComponent Orders="orders"></OrderListComponent>
+
+<NavLink class="btn btn-success" href="processedorders">Check Processed Orders</NavLink>
+
+@code {
+
+    private IEnumerable<Order> orders;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        orders = viewOutstandingOrdersUseCase.Execute();
+    }
+}

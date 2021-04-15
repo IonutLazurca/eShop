@@ -1,0 +1,70 @@
+﻿@page "/orderconfirm/{uniqueId}"
+
+@inject IViewOrderConfirmationUseCase viewOrderConfirmationUseCase
+<div class="container">
+    <div class="row">
+        <h3>Thank you for the order. Make sure to save order Id number: @UniqueId</h3>
+    </div>
+
+    @if (order != null)
+    {
+        <div class="row d-flex justify-content-between">
+            <div class="col">
+                <b>Shipping Info:</b>
+                <p>@order.CustomerName</p>
+                <p>@order.CustomerAddress</p>
+                <p>@order.CustomerCity</p>
+                <p>@order.CustomerCounty</p>
+                <p>@order.CustomerCountry</p>
+            </div>
+            <div class="col">
+                <OrderSummaryComponent Order="order" HideButton="true"></OrderSummaryComponent>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in order.LineItems)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Product.Price</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    <NavLink class="btn btn-info" href="outstandingorders">Check Orders</NavLink>
+</div>
+
+
+
+        @code {
+
+            [Parameter]
+            public string UniqueId { get; set; }
+            private Order order;
+
+            protected override void OnParametersSet()
+            {
+                base.OnParametersSet();
+
+                if (!string.IsNullOrWhiteSpace(UniqueId))
+                {
+                    order = viewOrderConfirmationUseCase.Execute(UniqueId);
+                }
+            }
+
+
+        }

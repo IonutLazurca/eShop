@@ -1,0 +1,31 @@
+﻿@inject IAddProductToCartUseCase addProductToCartUseCase
+
+
+<div class="card m-2 p-2" style="width: 12rem;">
+    <img src="@Product.ImageLink" class="car-img-top" alt="" />
+    <div class="card-body">
+        <h5 class="card-title">
+            <NavLink href="@($"product/{Product.ProductId}")">@Product.Name</NavLink>
+        </h5>
+        <p class="card-text" style="color:darkred">@Product.Price.ToString("c")</p>
+    </div>
+    <div class="card-footer">
+        <div class="btn-group d-flex">
+            <button class="btn btn-primary" @onclick="@(()=>AddToCart(Product.ProductId))">Add to Cart</button>
+            <NavLink class="btn btn-info" href="@($"product/{Product.ProductId}")">Product details</NavLink>
+        </div>
+
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public Product Product { get; set; }
+
+    private void AddToCart(int productId)
+    {
+      addProductToCartUseCase.Execute(productId);
+    }
+
+}

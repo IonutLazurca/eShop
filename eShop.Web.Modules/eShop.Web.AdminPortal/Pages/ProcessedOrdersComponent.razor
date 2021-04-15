@@ -1,0 +1,20 @@
+﻿@page "/processedorders"
+
+@attribute [Authorize]
+@inject IViewProcessedOrdersUseCase viewProcessedOrdersUseCase
+
+<h3>Processed Orders</h3>
+<br />
+<OrderListComponent Orders="orders"></OrderListComponent>
+<NavLink class="btn btn-info" href="outstandingorders">Check Outstanding Orders</NavLink>
+
+@code {
+
+    private IEnumerable<Order> orders;
+
+    protected override void OnInitialized()
+    {
+        orders = viewProcessedOrdersUseCase.Execute();
+    }
+
+}
